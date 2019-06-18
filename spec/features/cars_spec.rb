@@ -23,6 +23,17 @@ RSpec.feature "Cars", type: :feature, js:true do
       colour: 'Lavender'
     )
 
+    @car3 = Car.create!(
+      make: Make.create!(make: 'Dodge'),
+      model: Model.create!(model: 'Accord'),
+      style: Style.create!(body_style: 'Hatchback'),
+      trim: Trim.create!(trim_level: 'XLE'),
+      year: 1975,
+      colour: 'Purple'
+    )
+
+    
+    
   end
 
 
@@ -32,7 +43,7 @@ RSpec.feature "Cars", type: :feature, js:true do
       visit cars_path
 
       expect(page).to have_text("All My Cars!")
-      expect(page).to have_css('.car', count: 2)
+      expect(page).to have_css('.car', count: 3)
       expect(page).to have_text('Toyota Prius Extended Cab Pickup XL 1985')
       expect(page).to have_text('Toyota Prius Extended Cab Pickup Esi 2000')
       
@@ -40,6 +51,26 @@ RSpec.feature "Cars", type: :feature, js:true do
 
 
     end
+
+
+  context "when selecting a make" do
+    
+    it 'is filtering the make' do
+      visit cars_path
+      
+      within '.search-form' do
+        select 'Dodge', from: 'make'
+    
+        click_button 'Search!'
+      end
+
+      expect(page).to have_css('.car', count: 1)
+      expect(page).to have_text('Dodge Accord Hatchback XLE 1975')
+      save_screenshot('filter_cars.png')
+    end
+
+  end
+
 
   end
   
